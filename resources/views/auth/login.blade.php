@@ -44,5 +44,7 @@
                 </x-jet-button>
             </div>
         </form>
+
+        <a href="/auth/google/redirect" id="sign-in-with-google">Sign in with Google</a>
     </x-jet-authentication-card>
 </x-guest-layout>
