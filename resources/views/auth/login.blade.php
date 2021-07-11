@@ -46,5 +46,15 @@
         </form>
 
         <a href="/auth/google/redirect" id="sign-in-with-google">Sign in with Google</a>
+        <a href="/auth/facebook/redirect" id="sign-in-with-facebook">
+            Sign in with Facebook
+            <div
+                class="fb-like"
+                data-share="true"
+                data-width="450"
+                data-show-faces="true">
+            </div>
+        </a>
+        <a href="/auth/twitter/redirect" id="sign-in-with-twitter">Sign in with Twitter</a>
     </x-jet-authentication-card>
 </x-guest-layout>

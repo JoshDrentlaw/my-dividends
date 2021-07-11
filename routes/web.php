@@ -49,7 +49,16 @@ Route::get('/auth/facebook/redirect', function () {
 Route::get('/auth/facebook/callback', function () {
     $user = Socialite::driver('facebook')->user();
 
-    // $user->token
+    $user = User::firstOrCreate([
+        'email' => $user->getEmail()
+    ], [
+        'name' => $user->getName(),
+        'password' => Hash::make(random_int(24, 24))
+    ]);
+
+    Auth::login($user, true);
+
+    return redirect('/dashboard');
 });
 
 Route::get('/auth/twitter/redirect', function () {
@@ -59,9 +68,18 @@ Route::get('/auth/twitter/redirect', function () {
 Route::get('/auth/twitter/callback', function () {
     $user = Socialite::driver('twitter')->user();
 
-    // $user->token
+    $user = User::firstOrCreate([
+        'email' => $user->getEmail()
+    ], [
+        'name' => $user->getName(),
+        'password' => Hash::make(random_int(24, 24))
+    ]);
+
+    Auth::login($user, true);
+
+    return redirect('/dashboard');
 });
 
-/* Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
-})->name('dashboard'); */
+})->name('dashboard');
