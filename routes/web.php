@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Psy\Util\Str;
 use App\Models\User;
+use App\Models\Ticker;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes();
 Route::get('/auth/google/redirect', function () {
     return Socialite::driver('google')->redirect();
 });
@@ -81,5 +83,10 @@ Route::get('/auth/twitter/callback', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
+    $tickers = Auth::user()->tickers;
+    // dd($tickers);
+
+    return view('dashboard', compact('tickers'));
 })->name('dashboard');
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
