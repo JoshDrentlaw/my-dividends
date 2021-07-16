@@ -1,13 +1,17 @@
 <?php
 
+use App\Http\Controllers\TickersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Psy\Util\Str;
 use App\Models\User;
 use App\Models\Ticker;
+use Illuminate\Support\Facades\App;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,10 +87,13 @@ Route::get('/auth/twitter/callback', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    $tickers = Auth::user()->tickers;
-    // dd($tickers);
+    $tickers = Auth::user()->tickers->load(['dividends'])->toArray();
 
     return view('dashboard', compact('tickers'));
 })->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/tickers/store_user_tickers', [TickersController::class, 'storeUserTickers']);
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

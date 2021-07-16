@@ -14,6 +14,7 @@
         "alpinejs": "^3.0.6",
         "autoprefixer": "^10.3.0",
         "axios": "^0.21",
+        "babel-plugin-transform-react-jsx-source": "^6.22.0",
         "laravel-mix": "^6.0.25",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
@@ -30,6 +31,8 @@
         "babel-cli": "^6.26.0",
         "babel-preset-react-app": "^3.1.2",
         "bootstrap": "^5.0.2",
+        "luxon": "^2.0.1",
+        "numeral": "^2.0.6",
         "react": "^17.0.2",
         "react-dom": "^17.0.2"
     }
