@@ -3,15 +3,26 @@ import ReactDOM from 'react-dom'
 
 import ReactTagInput from '@pathofdev/react-tag-input'
 import '@pathofdev/react-tag-input/build/index.css'
+import axios from 'axios'
+import numeral from 'numeral'
+import { DateTime } from 'luxon'
 
 const TickerList = props => {
     let listItems
-    if (props.tickers) {
-        listItems = props.tickers.map(t => (
-            <li className="list-group-item">{t.symbol}</li>
+
+    if (props.tickers.length > 0) {
+        listItems = props.tickers.map((t, i) => (
+            <li key={i} className="list-group-item">
+                <div className="row align-items-center">
+                    <div className="col">{t.symbol}</div>
+                    <div className="col">EOD Price:<br />{numeral(t.price).format('$0,0.00')}</div>
+                    <div className="col">Next dividend:<br />{t.dividends.length > 0 ? DateTime.fromISO(t.dividends[0].payment_date).toLocaleString() : '-'}</div>
+                    <div className="col">Dividend Amount:<br />{t.dividends.length > 0 ? numeral(t.dividends[0].dividend_amount).format('$0.0000') : '-'}</div>
+                </div>
+            </li>
         ))
     } else {
-        listItems = <li className="list-group-item"><h3>No tickers...</h3></li>
+        listItems = <li key="1" className="list-group-item"><h3>No tickers...</h3></li>
     }
 
     return (
@@ -22,7 +33,7 @@ const TickerList = props => {
 }
 
 const AddTickerModal = props => {
-    const [tags, setTags] = useState(props.tickers)
+    const [tags, setTags] = useState([])
 
     const addTags = (newTags) => {
         newTags = newTags.map(t => t.toUpperCase())
@@ -45,7 +56,7 @@ const AddTickerModal = props => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" onClick={() => props.setTickers(tags)}>Save changes</button>
+                        <button type="button" className="btn btn-primary" onClick={() => props.setTickers(tags)}>Sumbit</button>
                     </div>
                 </div>
             </div>
@@ -56,8 +67,9 @@ const AddTickerModal = props => {
 class Dashboard extends React.Component {
     constructor(props) {
         super(props)
+
         this.state = {
-            tickers: []
+            tickers: tickers
         }
     }
 
@@ -66,15 +78,37 @@ class Dashboard extends React.Component {
     }
 
     setTickers = (tickers) => {
-        this.setState({ tickers })
+        axios.get(
+            `${iex_url}stock/market/batch`,
+            {
+                params: {
+                    types: 'price,upcoming-dividends',
+                    symbols: tickers.join(','),
+                    token: iex_key
+                }
+            }
+        )
+            .then(({ data }) => {
+                axios.post(
+                    '/tickers/store_user_tickers',
+                    {
+                        tickers: data
+                    }
+                ).then(res => {
+                    this.setState({ tickers: [...res.data, ...this.state.tickers] })
+                    const modal = document.getElementById('add-tickers-modal')
+                    const $modal = bootstrap.Modal.getInstance(modal)
+                    $modal.hide()
+                })
+            })
     }
 
     render() {
         return (
             <>
-                <div className="mx-auto w-25 card shadow-sm">
+                <div className="mx-auto w-50 card shadow-sm">
                     <div className="card-body text-center">
-                        <TickerList tickers={this.props.tickers} />
+                        <TickerList tickers={this.state.tickers} />
                         <button id="add-tickers" className="btn btn-outline-dark mx-auto my-2 d-block" data-bs-toggle="modal" data-bs-target="#add-tickers-modal">Add tickers</button>
                     </div>
                 </div>

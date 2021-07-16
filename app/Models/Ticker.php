@@ -9,8 +9,19 @@ class Ticker extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'symbol',
+        'user_id',
+        'price'
+    ];
+
     public function User()
     {
-        return $this->hasOne(Ticker::class);
+        return $this->belongsTo(Ticker::class);
+    }
+
+    public function dividends()
+    {
+        return $this->hasMany(Dividend::class);
     }
 }
