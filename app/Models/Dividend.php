@@ -5,23 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ticker extends Model
+class Dividend extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'symbol',
-        'user_id',
-        'price'
+        'dividend_amount',
+        'declare_date',
+        'payment_date',
+        'frequency'
     ];
 
-    public function User()
+    public function ticker()
     {
         return $this->belongsTo(Ticker::class);
-    }
-
-    public function dividends()
-    {
-        return $this->hasMany(Dividend::class);
     }
 }

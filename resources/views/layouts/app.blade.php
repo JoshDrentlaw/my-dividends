@@ -20,7 +20,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" style="height:100vh;">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -74,9 +74,13 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4" style="height:calc(100vh - 94px);">
             @yield('content')
         </main>
+        <p class="text-center mt-auto">
+            <small><a href="https://iexcloud.io">Data provided by IEX Cloud</a></small> |
+            Created by <a href="joshdrentlaw.com">Josh Drentlaw Web Design</a> 2021
+        </p>
     </div>
 
     @yield('components')
