@@ -1,3 +1,5 @@
+require('./bootstrap')
+
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes React and other helpers. It's a great starting point while
@@ -15,3 +17,7 @@ window.bootstrap = bootstrap
 
 /* require('./components/Example');
 require('./components/tickers') */
+
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+Alpine.start()
