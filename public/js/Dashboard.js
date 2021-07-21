@@ -42951,7 +42951,7 @@ var TickerList = function TickerList(props) {
             children: ["Next dividend:", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), t.dividends.length > 0 ? luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromISO(t.dividends[0].payment_date).toLocaleString() : '-']
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
             className: "col",
-            children: ["Dividend Amount:", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), t.dividends.length > 0 ? numeral__WEBPACK_IMPORTED_MODULE_3___default()(t.dividends[0].dividend_amount).format('$0.0000') : '-']
+            children: ["Dividend Amount:", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), t.dividends.length > 0 ? numeral__WEBPACK_IMPORTED_MODULE_3___default()(t.dividends[0].dividend_amount).format('$0.00[00]') : '-']
           })]
         })
       }, i);

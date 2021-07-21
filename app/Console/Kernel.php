@@ -29,9 +29,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $date = date_create(date('Y-m-d 16:00:00', timezone_open('America/New_York')));
-        $nyseClose = date_format($date, 'H:i');
         $schedule->call(function () {
             $tickers = Ticker::all();
             $getTickers = $tickers->unique('symbol');
@@ -44,22 +41,13 @@ class Kernel extends ConsoleKernel
             foreach ($data->json() as $symbol => $s) {
                 Ticker::where('symbol', $symbol)
                     ->update([
-                        'price' => $s['price'],
-                        /* 'dividend_amount' => $div['amount'] ?: null,
-                        'declare_date' => $div['declaredDate'] ?: null,
-                        'payment_date' => $div['paymentDate'] ?: null,
-                        'frequency' => $div['frequency'] ?: null */
+                        'price' => $s['price']
                     ]);
-
-                if (isset($s['upcoming-dividends'][0])) {
-                    $tickersOfSymbol = $tickers->where('symbol', '===', $symbol)->every(function ($ticker) {
-                        $ticker->dividends->every(function ($div) {
-                            dd($div->toArray());
-                        });
-                    });
-                }
             }
-        })->dailyAt('16:00');
+        })->weekdays()
+            ->timezone('America/New_York')
+            ->everyFourHours()
+            ->between('9:00', '16:00');
     }
 
     /**
