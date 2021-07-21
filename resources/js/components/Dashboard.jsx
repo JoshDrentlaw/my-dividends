@@ -17,7 +17,7 @@ const TickerList = props => {
                     <div className="col">{t.symbol}</div>
                     <div className="col">EOD Price:<br />{numeral(t.price).format('$0,0.00')}</div>
                     <div className="col">Next dividend:<br />{t.dividends.length > 0 ? DateTime.fromISO(t.dividends[0].payment_date).toLocaleString() : '-'}</div>
-                    <div className="col">Dividend Amount:<br />{t.dividends.length > 0 ? numeral(t.dividends[0].dividend_amount).format('$0.0000') : '-'}</div>
+                    <div className="col">Dividend Amount:<br />{t.dividends.length > 0 ? numeral(t.dividends[0].dividend_amount).format('$0.00[00]') : '-'}</div>
                 </div>
             </li>
         ))
