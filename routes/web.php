@@ -92,7 +92,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard', compact('tickers'));
 })->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/tickers/store_user_tickers', [TickersController::class, 'storeUserTickers']);
 });
 
