@@ -16,3 +16,7 @@ mix.js('resources/js/app.js', 'public/js')
 
 mix.js('resources/js/components/**.jsx', 'public/js')
     .react()
+
+if (mix.inProduction()) {
+    mix.version()
+}
