@@ -30,7 +30,21 @@ class TickersController extends Controller
                     ]);
                 }
             }
-            $tickers[] = $ticker->load(['dividends']);
+
+            if (isset($s['news'][0])) {
+                foreach ($s['news'] as $article) {
+                    $ticker->articles()->create([
+                        'url' => $article['url'],
+                        'source' => $article['source'],
+                        'headline' => $article['headline'],
+                        'summary' => $article['summary'],
+                        'image' => $article['image'],
+                        'has_paywall' => $article['hasPaywall'],
+                        'published_at' => date('Y-m-d H:i:s', $article['datetime'] / 1000)
+                    ]);
+                }
+            }
+            $tickers[] = $ticker->load(['dividends', 'articles']);
         }
 
         return $tickers;

@@ -7,6 +7,30 @@ import axios from 'axios'
 import numeral from 'numeral'
 import { DateTime } from 'luxon'
 
+const DashboardNav = props => {
+    return (
+        <>
+            <ul className="nav nav-pills nav-justified flex-column flex-sm-row mb-5" id="dashboard-tabs" role="tablist">
+                <li className="flex-sm-fill text-sm-center nav-item" role="presentation">
+                    <button className="nav-link active" id="positions-tab" data-bs-toggle="pill" data-bs-target="#positions" type="button" role="tab" aria-controls="positions" aria-selected="true">Positions</button>
+                </li>
+                <li className="flex-sm-fill text-sm-center nav-item" role="presentation">
+                    <button className="nav-link" id="news-articles-tab" data-bs-toggle="pill" data-bs-target="#news-articles" type="button" role="tab" aria-controls="news-articles" aria-selected="true">News</button>
+                </li>
+            </ul>
+            <div className="tab-content" id="dashboard-tab-content">
+                <div className="tab-pane fade show active" id="positions" role="tabpanel" aria-labelledby="positions-tab">
+                    <TickerList tickers={props.tickers} />
+                    <button id="add-tickers" className="btn btn-outline-dark mx-auto my-2 d-block" data-bs-toggle="modal" data-bs-target="#add-tickers-modal">Add tickers</button>
+                </div>
+                <div className="tab-pane fade" id="news-articles" role="tabpanel" aria-labelledby="news-articles-tab">
+                    <Articles tickers={props.tickers} />
+                </div>
+            </div>
+        </>
+    )
+}
+
 const TickerList = props => {
     let listItems
 
@@ -29,6 +53,35 @@ const TickerList = props => {
         <ul className="list-group list-group-flush">
             {listItems}
         </ul>
+    )
+}
+
+const Articles = props => {
+    return (
+        <div className="d-flex align-items-start">
+            <div className="nav flex-column nav-pills me-5" id="article-tabs" role="tablist" aria-orientation="vertical">
+                {props.tickers.map((t, i) => (
+                    <button key={t.symbol} className={(i === 0 ? "active " : "") + "nav-link"} id={t.symbol + "-tab"} data-bs-toggle="pill" data-bs-target={"#" + t.symbol} type="button" role="tab" aria-controls={t.symbol} aria-selected="true">{t.symbol}</button>
+                ))}
+            </div>
+            <div className="tab-content" id="articles-tab-content">
+                {props.tickers.map((t, i) => {
+                    const articles = t.articles.map((a, j) => (
+                        <div key={j + i + t.symbol} className="mb-5">
+                            {/* <img src={a.url + a.image} alt="article image" className="ratio ratio-16x9" /> */}
+                            <h3>{a.headline} <small>{DateTime.fromISO(a.published_at).toLocaleString()}</small></h3>
+                            <p>{a.summary}</p>
+                            <a href={a.url} target="_blank">See the full story at {a.source}</a> {parseInt(a.has_paywall) ? '' : '<span className="badge bg-success">Free</span>'}
+                        </div>
+                    ))
+                    return (
+                        <div key={i + t.symbol} className={(i === 0 ? "show active " : "") + "tab-pane fade"} id={t.symbol} role="tabpanel" aria-labelledby={t.symbol + "-tab"}>
+                            {articles}
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
     )
 }
 
@@ -108,8 +161,7 @@ class Dashboard extends React.Component {
             <>
                 <div className="mx-auto w-50 card shadow-sm">
                     <div className="card-body text-center">
-                        <TickerList tickers={this.state.tickers} />
-                        <button id="add-tickers" className="btn btn-outline-dark mx-auto my-2 d-block" data-bs-toggle="modal" data-bs-target="#add-tickers-modal">Add tickers</button>
+                        <DashboardNav tickers={this.state.tickers} />
                     </div>
                 </div>
                 <AddTickerModal tickers={this.state.tickers} setTickers={(tickers) => this.setTickers(tickers)} />

@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Psy\Util\Str;
+use Illuminate\Support\Facades\App;
+
 use App\Models\User;
 use App\Models\Ticker;
-use Illuminate\Support\Facades\App;
+use App\Models\NewsArticle;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +89,7 @@ Route::get('/auth/twitter/callback', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    $tickers = Auth::user()->tickers->load(['dividends'])->toArray();
+    $tickers = Auth::user()->tickers->load(['dividends', 'articles'])->toArray();
 
     return view('dashboard', compact('tickers'));
 })->name('dashboard');
