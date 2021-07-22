@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\NewsArticle;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,12 +30,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // UPDATE SYMBOL PRICES
         $schedule->call(function () {
             $tickers = Ticker::all();
             $getTickers = $tickers->unique('symbol');
             $symbols = join(',', $getTickers->pluck('symbol')->all());
             $data = Http::get(env('IEX_CLOUD_API_URL') . 'stock/market/batch', [
-                'types' => 'price,upcoming-dividends',
+                'types' => 'price',
                 'symbols' => $symbols,
                 'token' => env('IEX_CLOUD_API_KEY')
             ]);
@@ -47,6 +49,38 @@ class Kernel extends ConsoleKernel
         })->weekdays()
             ->timezone('America/New_York')
             ->everyFourHours()
+            ->between('9:00', '16:00');
+
+        // UPDATE NEWS ARTICLES
+        $schedule->call(function () {
+            $tickers = Ticker::all();
+            $getTickers = $tickers->unique('symbol');
+            $symbols = join(',', $getTickers->pluck('symbol')->all());
+            $data = Http::get(env('IEX_CLOUD_API_URL') . 'stock/market/batch', [
+                'types' => 'news',
+                'symbols' => $symbols,
+                'token' => env('IEX_CLOUD_API_KEY')
+            ]);
+            foreach ($data->json() as $symbol => $s) {
+                if (isset($s['news'][0])) {
+                    NewsArticle::where('symbol', $symbol)->delete();
+                    foreach ($s['news'] as $article) {
+                        NewsArticle::create([
+                            'symbol' => $symbol,
+                            'url' => $article['url'],
+                            'source' => $article['source'],
+                            'headline' => $article['headline'],
+                            'summary' => $article['summary'],
+                            'image' => $article['image'],
+                            'has_paywall' => $article['hasPaywall'],
+                            'published_at' => $article['datetime']
+                        ]);
+                    }
+                }
+            }
+        })->weekdays()
+            ->timezone('America/New_York')
+            ->hourly()
             ->between('9:00', '16:00');
     }
 

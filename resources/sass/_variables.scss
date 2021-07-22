@@ -17,3 +17,11 @@ $yellow: #ffed4a;
 $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
+// Required
+@import "~bootstrap/scss/functions";
+$nav-link-color:                    #212529;
+$nav-link-hover-color:              #212529;
+$nav-pills-link-active-color:       white;
+$nav-pills-link-active-bg:          #212529;
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';

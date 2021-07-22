@@ -35,7 +35,6 @@
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
         </script>
-        <x-jet-banner />
 
         <div class="font-sans text-gray-900 antialiased">
 
@@ -62,7 +61,7 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @yield('content')
             </main>
         </div>
 

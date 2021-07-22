@@ -42931,6 +42931,71 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+var DashboardNav = function DashboardNav(props) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("ul", {
+      className: "nav nav-pills nav-justified flex-column flex-sm-row mb-5",
+      id: "dashboard-tabs",
+      role: "tablist",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
+        className: "flex-sm-fill text-sm-center nav-item",
+        role: "presentation",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          className: "nav-link active",
+          id: "positions-tab",
+          "data-bs-toggle": "pill",
+          "data-bs-target": "#positions",
+          type: "button",
+          role: "tab",
+          "aria-controls": "positions",
+          "aria-selected": "true",
+          children: "Positions"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("li", {
+        className: "flex-sm-fill text-sm-center nav-item",
+        role: "presentation",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          className: "nav-link",
+          id: "news-articles-tab",
+          "data-bs-toggle": "pill",
+          "data-bs-target": "#news-articles",
+          type: "button",
+          role: "tab",
+          "aria-controls": "news-articles",
+          "aria-selected": "true",
+          children: "News"
+        })
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+      className: "tab-content",
+      id: "dashboard-tab-content",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        className: "tab-pane fade show active",
+        id: "positions",
+        role: "tabpanel",
+        "aria-labelledby": "positions-tab",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(TickerList, {
+          tickers: props.tickers
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          id: "add-tickers",
+          className: "btn btn-outline-dark mx-auto my-2 d-block",
+          "data-bs-toggle": "modal",
+          "data-bs-target": "#add-tickers-modal",
+          children: "Add tickers"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        className: "tab-pane fade",
+        id: "news-articles",
+        role: "tabpanel",
+        "aria-labelledby": "news-articles-tab",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(Articles, {
+          tickers: props.tickers
+        })
+      })]
+    })]
+  });
+};
+
 var TickerList = function TickerList(props) {
   var listItems;
 
@@ -42968,6 +43033,59 @@ var TickerList = function TickerList(props) {
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("ul", {
     className: "list-group list-group-flush",
     children: listItems
+  });
+};
+
+var Articles = function Articles(props) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+    className: "d-flex align-items-start",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      className: "nav flex-column nav-pills me-5",
+      id: "article-tabs",
+      role: "tablist",
+      "aria-orientation": "vertical",
+      children: props.tickers.map(function (t, i) {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+          className: (i === 0 ? "active " : "") + "nav-link",
+          id: t.symbol + "-tab",
+          "data-bs-toggle": "pill",
+          "data-bs-target": "#" + t.symbol,
+          type: "button",
+          role: "tab",
+          "aria-controls": t.symbol,
+          "aria-selected": "true",
+          children: t.symbol
+        }, t.symbol);
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      className: "tab-content",
+      id: "articles-tab-content",
+      children: props.tickers.map(function (t, i) {
+        var articles = t.articles.map(function (a, j) {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+            className: "mb-5",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("h3", {
+              children: [a.headline, " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("small", {
+                children: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromISO(a.published_at).toLocaleString()
+              })]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+              children: a.summary
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("a", {
+              href: a.url,
+              target: "_blank",
+              children: ["See the full story at ", a.source]
+            }), " ", parseInt(a.has_paywall) ? '' : '<span className="badge bg-success">Free</span>']
+          }, j + i + t.symbol);
+        });
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+          className: (i === 0 ? "show active " : "") + "tab-pane fade",
+          id: t.symbol,
+          role: "tabpanel",
+          "aria-labelledby": t.symbol + "-tab",
+          children: articles
+        }, i + t.symbol);
+      })
+    })]
   });
 };
 
@@ -43090,17 +43208,11 @@ var Dashboard = /*#__PURE__*/function (_React$Component) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
           className: "mx-auto w-50 card shadow-sm",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
             className: "card-body text-center",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(TickerList, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(DashboardNav, {
               tickers: this.state.tickers
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
-              id: "add-tickers",
-              className: "btn btn-outline-dark mx-auto my-2 d-block",
-              "data-bs-toggle": "modal",
-              "data-bs-target": "#add-tickers-modal",
-              children: "Add tickers"
-            })]
+            })
           })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(AddTickerModal, {
           tickers: this.state.tickers,
