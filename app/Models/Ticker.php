@@ -24,4 +24,9 @@ class Ticker extends Model
     {
         return $this->hasMany(Dividend::class);
     }
+
+    public function articles()
+    {
+        return $this->hasMany(NewsArticle::class, 'symbol', 'symbol');
+    }
 }
