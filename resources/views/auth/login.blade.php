@@ -65,6 +65,10 @@
                             </div>
                         </div>
                     </form>
+                    <div class="mt-5 text-center">
+                        <p>Sign on with social media</p>
+                        <a class="btn btn-outline-dark" href="/auth/google/redirect">Sign on with Google</a>
+                    </div>
                 </div>
             </div>
         </div>
