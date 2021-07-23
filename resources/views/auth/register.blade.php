@@ -69,7 +69,7 @@
                             </div>
                         </div>
                     </form>
-                    <div class="mt-5">
+                    <div class="mt-5 text-center">
                         <p>Register with social media</p>
                         <a class="btn btn-outline-dark" href="/auth/google/redirect">Register with Google</a>
                     </div>
