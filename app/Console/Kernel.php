@@ -2,14 +2,14 @@
 
 namespace App\Console;
 
-use App\Models\NewsArticle;
+use App\Models\Article;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 use Illuminate\Support\Facades\Http;
 
 use App\Models\User;
-use App\Models\Ticker;
+use App\Models\Position;
 
 class Kernel extends ConsoleKernel
 {
@@ -32,16 +32,16 @@ class Kernel extends ConsoleKernel
     {
         // UPDATE SYMBOL PRICES
         $schedule->call(function () {
-            $tickers = Ticker::all();
-            $getTickers = $tickers->unique('symbol');
-            $symbols = join(',', $getTickers->pluck('symbol')->all());
+            $positions = Position::all();
+            $getPositions = $positions->unique('symbol');
+            $symbols = join(',', $getPositions->pluck('symbol')->all());
             $data = Http::get(env('IEX_CLOUD_API_URL') . 'stock/market/batch', [
                 'types' => 'price',
                 'symbols' => $symbols,
                 'token' => env('IEX_CLOUD_API_KEY')
             ]);
             foreach ($data->json() as $symbol => $s) {
-                Ticker::where('symbol', $symbol)
+                Position::where('symbol', $symbol)
                     ->update([
                         'price' => $s['price']
                     ]);
@@ -53,9 +53,9 @@ class Kernel extends ConsoleKernel
 
         // UPDATE NEWS ARTICLES
         $schedule->call(function () {
-            $tickers = Ticker::all();
-            $getTickers = $tickers->unique('symbol');
-            $symbols = join(',', $getTickers->pluck('symbol')->all());
+            $positions = Position::all();
+            $getPositions = $positions->unique('symbol');
+            $symbols = join(',', $getPositions->pluck('symbol')->all());
             $data = Http::get(env('IEX_CLOUD_API_URL') . 'stock/market/batch', [
                 'types' => 'news',
                 'symbols' => $symbols,
@@ -63,9 +63,9 @@ class Kernel extends ConsoleKernel
             ]);
             foreach ($data->json() as $symbol => $s) {
                 if (isset($s['news'][0])) {
-                    NewsArticle::where('symbol', $symbol)->delete();
+                    Article::where('symbol', $symbol)->delete();
                     foreach ($s['news'] as $article) {
-                        NewsArticle::create([
+                        Article::create([
                             'symbol' => $symbol,
                             'url' => $article['url'],
                             'source' => $article['source'],

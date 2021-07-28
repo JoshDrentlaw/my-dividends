@@ -59,8 +59,13 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function tickers()
+    public function accounts()
     {
-        return $this->hasMany(Ticker::class);
+        return $this->hasMany(Account::class);
     }
+
+    /* public function positions()
+    {
+        return $this->hasMany(Position::class);
+    } */
 }

@@ -9,7 +9,7 @@
         const iex_url = '{{ env('IEX_CLOUD_API_URL') }}';
         const iex_key = '{{ env('IEX_CLOUD_API_KEY') }}';
 
-        const tickers = @json($tickers)
+        const userAccounts = @json($accounts)
     </script>
     <script src="{{ asset('js/Dashboard.js') }}"></script>
 @endsection
