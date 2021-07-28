@@ -19,4 +19,8 @@ mix.js('resources/js/components/**.jsx', 'public/js')
 
 if (mix.inProduction()) {
     mix.version()
+} else {
+    mix.webpackConfig({
+        devtool: 'eval-source-map'
+    })
 }

@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\TickersController;
+use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\PositionsController;
+
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,8 +14,8 @@ use Psy\Util\Str;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
-use App\Models\Ticker;
-use App\Models\NewsArticle;
+use App\Models\Position;
+use App\Models\Article;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,13 +91,17 @@ Route::get('/auth/twitter/callback', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    $tickers = Auth::user()->tickers->load(['dividends', 'articles'])->toArray();
+    $user = User::find(Auth::user()->id);
+    $accounts = $user->accounts()->with(['positions', 'positions.articles', 'positions.dividends'])->get();
 
-    return view('dashboard', compact('tickers'));
+    return view('dashboard', compact('accounts'));
 })->name('dashboard');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::post('/tickers/store_user_tickers', [TickersController::class, 'storeUserTickers']);
+    Route::post('/accounts/create_account', [AccountsController::class, 'createAccount']);
+
+    Route::post('/positions/store_user_positions', [PositionsController::class, 'storeUserPositions']);
+    Route::post('/positions/upload_spreadsheets', [PositionsController::class, 'uploadSpreadsheets']);
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

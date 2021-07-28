@@ -12,12 +12,13 @@ class Dividend extends Model
     protected $fillable = [
         'dividend_amount',
         'declare_date',
+        'ex_date',
         'payment_date',
         'frequency'
     ];
 
-    public function ticker()
+    public function position()
     {
-        return $this->belongsTo(Ticker::class);
+        return $this->belongsTo(Position::class);
     }
 }

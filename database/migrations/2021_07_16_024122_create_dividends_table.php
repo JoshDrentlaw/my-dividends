@@ -15,9 +15,10 @@ class CreateDividendsTable extends Migration
     {
         Schema::create('dividends', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('ticker_id');
+            $table->bigInteger('position_id');
             $table->decimal('dividend_amount', 8, 6);
             $table->date('declare_date');
+            $table->date('ex_date');
             $table->date('payment_date');
             $table->string('frequency');
             $table->timestamps();
