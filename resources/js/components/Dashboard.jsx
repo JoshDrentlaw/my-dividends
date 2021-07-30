@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 
 import { WithContext as ReactTags } from 'react-tag-input'
+import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer, LineChart, Line, LabelList } from 'recharts'
 import axios from 'axios'
 import numeral from 'numeral'
 import { DateTime } from 'luxon'
@@ -13,10 +14,10 @@ const delimiters = [32, 188]
 const DashboardNav = props => {
     return (
         <>
-            <ul className="nav nav-pills nav-justified flex-column flex-sm-row mb-5">
+            <ul className="nav nav-pills nav-justified flex-column flex-sm-row mb-3">
                 {props.accounts.map((a, i) => {
                     const active = i === 0 ? ' active' : '',
-                        id = a.account_name.replaceAll(' ', '-')
+                        id = a.account_name.replaceAll(' ', '-') + '-' + a.account_location.replaceAll(' ', '-')
 
                     return (
                         <li className="flex-sm-fill text-sm-center nav-item" role="presentation" key={'account-' + id} onClick={() => props.setAccount(a)}>
@@ -31,33 +32,33 @@ const DashboardNav = props => {
             <div className="tab-content" id="dashboard-account-content">
                 {props.accounts.map((a, i) => {
                     const active = i === 0 ? ' show active' : '',
-                        id = a.account_name.replaceAll(' ', '-')
+                        id = a.account_name.replaceAll(' ', '-') + '-' + a.account_location.replaceAll(' ', '-')
 
                     return (
                         <div key={'account-container-' + id} className={"tab-pane fade" + active} id={id} role="tabpanel" aria-labelledby={id + "-tab"}>
                             <ul className="nav nav-pills nav-justified flex-column flex-sm-row mb-5" id="dashboard-tabs" role="tablist">
                                 <li className="flex-sm-fill text-sm-center nav-item" role="presentation">
-                                    <button className="nav-link active" id="positions-tab" data-bs-toggle="pill" data-bs-target="#positions" type="button" role="tab" aria-controls="positions" aria-selected="true">Positions</button>
+                                    <button className="nav-link active" id={id + "-positions-tab"} data-bs-toggle="pill" data-bs-target={"#" + id + "-positions"} type="button" role="tab" aria-controls={id + "-positions"} aria-selected="true">Positions</button>
                                 </li>
                                 <li className="flex-sm-fill text-sm-center nav-item" role="presentation">
-                                    <button className="nav-link" id="articles-tab" data-bs-toggle="pill" data-bs-target="#articles" type="button" role="tab" aria-controls="articles" aria-selected="true">Articles</button>
+                                    <button className="nav-link" id={id + "-articles-tab"} data-bs-toggle="pill" data-bs-target={"#" + id + "-articles"} type="button" role="tab" aria-controls={id + "-articles"} aria-selected="true">Articles</button>
                                 </li>
                                 <li className="flex-sm-fill text-sm-center nav-item" role="presentation">
-                                    <button className="nav-link" id="charts-tab" data-bs-toggle="pill" data-bs-target="#charts" type="button" role="tab" aria-controls="charts" aria-selected="true">Charts</button>
+                                    <button className="nav-link" id={id + "-charts-tab"} data-bs-toggle="pill" data-bs-target={"#" + id + "-charts"} type="button" role="tab" aria-controls={id + "-charts"} aria-selected="true">Charts</button>
                                 </li>
                             </ul>
                             <div className="tab-content" id="dashboard-position-content">
-                                <div className="tab-pane fade show active" id="positions" role="tabpanel" aria-labelledby="positions-tab">
+                                <div className="tab-pane fade show active" id={id + "-positions"} role="tabpanel" aria-labelledby={id + "-positions-tab"}>
                                     <PositionList positions={a.positions} />
                                     <div className="my-3">
                                         <button id="add-positions" className="btn btn-outline-dark me-3" data-bs-toggle="modal" data-bs-target="#add-positions-modal">Add positions</button>
                                         <button id="upload-spreadsheets" className="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#upload-spreadsheets-modal">Upload Spreadsheets</button>
                                     </div>
                                 </div>
-                                <div className="tab-pane fade" id="articles" role="tabpanel" aria-labelledby="articles-tab">
+                                <div className="tab-pane fade" id={id + "-articles"} role="tabpanel" aria-labelledby={id + "-articles-tab"}>
                                     <Articles positions={a.positions} />
                                 </div>
-                                <div className="tab-pane fade" id="charts" role="tabpanel" aria-labelledby="charts-tab">
+                                <div className="tab-pane fade" id={id + "-charts"} role="tabpanel" aria-labelledby={id + "-charts-tab"} style={{ width: '100%', height: 500 }}>
                                     <Charts positions={a.positions} />
                                 </div>
                             </div>
@@ -132,8 +133,6 @@ const PositionList = props => {
     const positions = props.positions
     let listItems
 
-    console.log(positions)
-
     if (positions.length > 0) {
         listItems = positions.map((t, i) => (
             <li key={'symbol' + i} className="list-group-item">
@@ -159,7 +158,6 @@ const PositionList = props => {
 
 const Articles = props => {
     const positions = props.positions
-    console.log(positions)
 
     if (positions) {
         return (
@@ -195,33 +193,41 @@ const Articles = props => {
     }
 }
 
-const Charts = props => {
-    const positions = props.positions
-
-    if (positions) {
-        return (
-            <div className="d-flex align-items-start">
-                <div className="nav flex-column nav-pills me-5" id="chart-tabs" role="tablist" aria-orientation="vertical">
-                    {positions.map((t, i) => (
-                        <button key={'chart-' + t.symbol} className={(i === 0 ? "active " : "") + "nav-link"} id={t.symbol + "-tab"} data-bs-toggle="pill" data-bs-target={"#" + t.symbol} type="button" role="tab" aria-controls={t.symbol} aria-selected="true">{t.symbol}</button>
-                    ))}
-                </div>
-                <div className="tab-content" id="charts-tab-content">
-                    {positions.map((t, i) => {
-                        return (
-                            <div key={'chart-' + t.symbol} className={(i === 0 ? "show active " : "") + "tab-pane fade"} id={t.symbol} role="tabpanel" aria-labelledby={t.symbol + "-tab"}>
-
-                            </div>
-                        )
-                    })}
+const Charts = (props) => {
+    return (
+        <div className="d-flex align-items-start" style={{ width: '100%', height: '100%' }}>
+            <div className="nav flex-column nav-pills me-5" id="chart-tabs" role="tablist" aria-orientation="vertical">
+                <button className="nav-link active" id="diversity-tab" data-bs-toggle="pill" data-bs-target="#diversity" type="button" role="tab" aria-controls="diversity" aria-selected="true">DIVersity</button>
+            </div>
+            <div className="tab-content" id="charts-tab-content" style={{ width: '100%', height: '100%' }}>
+                <div className="tab-pane show active fade" id="diversity" role="tabpanel" aria-labelledby="diversity-tab" style={{ width: '100%', height: '100%' }}>
+                    <Diversity positions={props.positions} />
                 </div>
             </div>
-        )
-    } else {
-        return (
-            <p>No positions...</p>
-        )
-    }
+        </div>
+    )
+}
+
+const Diversity = ({ positions }) => {
+    const totalShares = positions.reduce((a, v) => numeral(v.shares).add(a).value(), 0)
+
+    return (
+        <ResponsiveContainer width="100%" height="100%">
+            <PieChart width={300} height={300}>
+                {/* <Legend verticalAlign="top" content={() => "Share percentage of account portfolio"} /> */}
+                <Pie
+                    dataKey="value"
+                    nameKey="name"
+                    data={positions.map(p => ({ name: p.symbol, value: parseFloat(numeral(p.shares).divide(totalShares).multiply(100).value().toFixed(1)) }))}
+                    label
+                >
+                    <LabelList dataKey="name" />
+                </Pie>
+                <Tooltip />
+                <Legend content={() => "Share percentage of account portfolio"} />
+            </PieChart>
+        </ResponsiveContainer>
+    )
 }
 
 const UploadSpreadsheetsModal = props => {
@@ -356,7 +362,6 @@ class Dashboard extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state)
     }
 
     freshData = (state = this.state.accounts) => {
@@ -380,7 +385,6 @@ class Dashboard extends React.Component {
                 }
             )
                 .then(({ data }) => {
-                    console.log(data)
                     const accounts = state.map(a => {
                         a.positions = a.positions.map(p => {
                             const symData = data[p.symbol]
@@ -392,7 +396,6 @@ class Dashboard extends React.Component {
                         return a
                     })
 
-                    console.log(accounts)
                     this.setState({ accounts, account: accounts[0], positions: accounts[0].positions })
                 })
         }
@@ -450,7 +453,7 @@ class Dashboard extends React.Component {
     render() {
         return (
             <>
-                <div className="mx-auto w-50 card shadow-sm">
+                <div className="mx-auto w-50 card shadow-sm" style={{ minHeight: '500px' }}>
                     <div className="card-body text-center">
                         {this.state.accounts.length > 0
                             ? <DashboardNav

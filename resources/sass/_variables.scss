@@ -5,3 +5,7 @@ $nav-pills-link-active-color:       white;
 $nav-pills-link-active-bg:          #212529;
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
+
+.tab-content .nav-pills .nav-link.active {
+    background-color: #5f6367;
+}
