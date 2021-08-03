@@ -20,13 +20,12 @@ class PositionsController extends Controller
         $acct = $request->post('account');
         $user = User::find(Auth::user()->id);
         $account = Account::find($acct['id']);
-        foreach ($request->post('positions') as $symbol => $s) {
-            $position = $account->positions()->create([
-                'symbol' => $symbol,
-                'price' => $s['price']
+        foreach ($request->post('symbols') as $symbol) {
+            $account->positions()->create([
+                'symbol' => $symbol
             ]);
 
-            if (isset($s['upcoming-dividends'][0])) {
+            /* if (isset($s['upcoming-dividends'][0])) {
                 foreach ($s['upcoming-dividends'] as $div) {
                     $position->dividends()->create([
                         'dividend_amount' => $div['amount'],
@@ -50,7 +49,7 @@ class PositionsController extends Controller
                         'published_at' => date('Y-m-d H:i:s', $article['datetime'] / 1000)
                     ]);
                 }
-            }
+            } */
         }
 
         return $account->positions()->with(['dividends', 'articles'])->get();

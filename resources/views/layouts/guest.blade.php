@@ -60,7 +60,7 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main style="height: calc(100vh - 96px);">
                 @yield('content')
             </main>
         </div>

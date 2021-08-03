@@ -23,7 +23,7 @@
     <div id="app" style="height:100vh;">
         @livewire('navigation-menu')
 
-        <main class="py-4">
+        <main class="py-4" style="height: calc(100vh - 96px);">
             @yield('content')
         </main>
         <p class="text-center mt-auto">
